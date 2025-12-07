@@ -1,11 +1,12 @@
-# Laravel Route Lens
+# Route Scope
 
 A lightweight Laravel package for inspecting and analyzing your application routes.
 
 ## Installation
 
+
 ```bash
-composer require projecthanif/laravel-route-lens
+composer require projecthanif/routescope --dev
 ```
 
 The package auto-registers via Laravel's service provider discovery.
@@ -15,16 +16,16 @@ The package auto-registers via Laravel's service provider discovery.
 Publish the configuration file:
 
 ```bash
-php artisan vendor:publish --tag=laravel-route-lens-config
+php artisan vendor:publish --tag=routescope-config
 ```
 
-Edit `config/laravel-route-lens.php`:
+Edit `config/routescope.php`:
 
 ```php
 return [
-    'enabled' => env('LARAVEL_ROUTE_LENS_ENABLED', true),
-    'prefix' => env('LARAVEL_ROUTE_LENS_PREFIX', 'route-lens'),
-    'excluded_patterns' => ['route-lens', '_ignition', 'sanctum/csrf-cookie', 'telescope'],
+    'enabled' => env('ROUTESCOPE_ENABLED', app()->environment("local", "development")),
+    'prefix' => env('ROUTESCOPE_PREFIX', 'routescope'),
+    'excluded_patterns' => ['routescope', '_ignition', 'sanctum/csrf-cookie', 'telescope'],
 ];
 ```
 
@@ -32,15 +33,15 @@ return [
 
 ### Access the Dashboard
 
-Visit `http://localhost/route-lens` in your browser to view the interactive route dashboard.
+Visit `http://localhost/routescope` in your browser to view the interactive route dashboard.
 
 ### Using the Facade
 
 ```php
-use Projecthanif\LaravelRouteLens\Facades\RouteLens;
+use Projecthanif\RouteScope\Facades\RouteScope;
 
 // Get all routes (API and Web separated)
-$routes = RouteLens::getAllRoutes();
+$routes = RouteScope::getAllRoutes();
 
 // Returns:
 // [
@@ -52,15 +53,15 @@ $routes = RouteLens::getAllRoutes();
 ### Dependency Injection
 
 ```php
-use Projecthanif\LaravelRouteLens\Services\LaravelRouteLensService;
+use Projecthanif\RouteScope\Services\RouteScopeService;
 
 class MyController extends Controller
 {
-    public function __construct(private LaravelRouteLensService $routeLens) {}
+    public function __construct(private RouteScopeService $routeScope) {}
     
     public function analyze()
     {
-        return $this->routeLens->getAllRoutes();
+        return $this->routeScope->getAllRoutes();
     }
 }
 ```
@@ -77,7 +78,7 @@ class MyController extends Controller
 
 ```env
 LARAVEL_ROUTE_LENS_ENABLED=true
-LARAVEL_ROUTE_LENS_PREFIX=route-lens
+LARAVEL_ROUTE_LENS_PREFIX=routescope
 ```
 
 ## Disable in Production
@@ -97,7 +98,7 @@ Or conditionally in config:
 ## Requirements
 
 - PHP 8.1+
-- Laravel 12.0+
+- Laravel 10.0+
 - Illuminate/Support
 
 ## File Structure
@@ -105,33 +106,33 @@ Or conditionally in config:
 ```
 src/
 ├── Controllers/
-│   └── RouteLensController.php
+│   └── RouteScopeController.php
 ├── Facades/
-│   └── RouteLens.php
+│   └── RouteScope.php
 ├── Providers/
-│   └── LaravelRouteLensProvider.php
+│   └── RouteScopeProvider.php
 ├── Services/
-│   └── LaravelRouteLensService.php
+│   └── RouteScopeService.php
 └── routes/
     └── web.php
 
 config/
-└── laravel-route-lens.php
+└── routescope.php
 
 resources/views/
-└── routelens.blade.php
+└── routescope.blade.php
 ```
 
 ## API Reference
 
-### LaravelRouteLensService
+### RouteScopeService
 
 #### `getAllRoutes(): array`
 
 Returns all routes organized into API and Web categories.
 
 ```php
-$service = app(LaravelRouteLensService::class);
+$service = app(RouteScopeService::class);
 $data = $service->getAllRoutes();
 
 // Result:
@@ -141,9 +142,8 @@ $data = $service->getAllRoutes();
             'method' => 'GET',
             'path' => '/api/users',
             'name' => 'users.index',
-            'controller' => 'App\Http\Controllers\UserController@index',
+            'source' => 'app/http/controllers/UserController::index',
             'middleware' => ['api', 'auth:sanctum'],
-            'domain' => null
         ]
     ],
     'webRoutes' => [
@@ -151,9 +151,8 @@ $data = $service->getAllRoutes();
             'method' => 'GET',
             'path' => '/dashboard',
             'name' => 'dashboard',
-            'controller' => 'App\Http\Controllers\DashboardController@show',
+            'source' => 'app/http/controllers/DashboardController::show',
             'middleware' => ['web', 'auth'],
-            'domain' => null
         ]
     ]
 ]
@@ -165,37 +164,36 @@ Each route object contains:
 
 | Field | Type | Description |
 |-------|------|-------------|
-| `method` | string | HTTP method (GET, POST, PUT, DELETE, etc.) |
+| `method` | string | HTTP method (GET, POST, PUT, DELETE, PATCH, etc.) |
 | `path` | string | Route URI path |
-| `name` | string | Route name (or "unnamed") |
-| `controller` | string | Controller class and method |
+| `name` | string\|null | Route name (or null if unnamed) |
+| `source` | string | Controller class and method or closure |
 | `middleware` | array | Applied middleware |
-| `domain` | string\|null | Route domain if specified |
 
 ## Examples
 
 ### List All Routes in Console
 
 ```php
-use Projecthanif\LaravelRouteLens\Facades\RouteLens;
+use Projecthanif\RouteScope\Facades\RouteScope;
 
-$all = RouteLens::getAllRoutes();
+$all = RouteScope::getAllRoutes();
 
 foreach ($all['apiRoutes'] as $route) {
-    echo "{$route['method']} {$route['path']}\n";
+    echo "{$route['method']} {$route['path']} ({$route['source']})\n";
 }
 
 foreach ($all['webRoutes'] as $route) {
-    echo "{$route['method']} {$route['path']}\n";
+    echo "{$route['method']} {$route['path']} ({$route['source']})\n";
 }
 ```
 
 ### Find Specific Routes
 
 ```php
-use Projecthanif\LaravelRouteLens\Services\LaravelRouteLensService;
+use Projecthanif\RouteScope\Services\RouteScopeService;
 
-$service = app(LaravelRouteLensService::class);
+$service = app(RouteScopeService::class);
 $routes = $service->getAllRoutes();
 
 // Find routes with "user" in the path
@@ -208,11 +206,13 @@ $userRoutes = array_merge(
 ### Generate Route Documentation
 
 ```php
-$routes = RouteLens::getAllRoutes();
+use Projecthanif\RouteScope\Facades\RouteScope;
+
+$routes = RouteScope::getAllRoutes();
 
 echo "# API Routes\n\n";
 foreach ($routes['apiRoutes'] as $route) {
-    echo "- `{$route['method']}` `{$route['path']}` → `{$route['controller']}`\n";
+    echo "- `{$route['method']}` `{$route['path']}` → `{$route['source']}`\n";
 }
 ```
 

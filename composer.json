@@ -1,5 +1,5 @@
 {
-    "name": "projecthanif/laravel-route-lens",
+    "name": "projecthanif/routescope",
     "description": "A Laravel package for route debugging and analysis.",
     "keywords": [
         "php",
@@ -8,8 +8,9 @@
         "debugging",
         "analysis",
         "package",
-        "route-lens",
-        "laravel-route-lens",
+        "route lens",
+        "routescope",
+        "laravel route lens",
         "route-debugging",
         "route-analysis"
     ],
@@ -36,12 +37,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Projecthanif\\LaravelRouteLens\\": "src/"
+            "Projecthanif\\RouteScope\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Projecthanif\\LaravelRouteLens\\Tests\\": "tests/"
+            "Projecthanif\\RouteScope\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "stable",
@@ -74,7 +75,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Projecthanif\\LaravelRouteLens\\Providers\\LaravelRouteLensProvider"
+                "Projecthanif\\RouteScope\\Providers\\RouteScopeProvider"
             ]
         }
     },
