@@ -11,15 +11,15 @@ return [
     |
     */
 
-    "enabled" => env("ROUTESCOPE_ENABLED", app()->environment("local", "development")),
+    'enabled' => env('ROUTESCOPE_ENABLED', app()->environment('local', 'development')),
 
-    "prefix" => env("ROUTESCOPE_PREFIX", "routescope"),
+    'prefix' => env('ROUTESCOPE_PREFIX', 'routescope'),
 
-    "excluded_patterns" => [
-        "routescope",
-        "_ignition",
-        "sanctum/csrf-cookie",
-        "telescope",
-        "__execute-laravel-error-solution",
+    'excluded_patterns' => [
+        'routescope',
+        '_ignition',
+        'sanctum/csrf-cookie',
+        'telescope',
+        '__execute-laravel-error-solution',
     ],
 ];

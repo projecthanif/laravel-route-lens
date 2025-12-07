@@ -77,8 +77,8 @@ class MyController extends Controller
 ## Environment Variables
 
 ```env
-LARAVEL_ROUTE_LENS_ENABLED=true
-LARAVEL_ROUTE_LENS_PREFIX=routescope
+ROUTESCOPE_ENABLED=true
+ROUTESCOPE_PREFIX=routescope
 ```
 
 ## Disable in Production
@@ -86,7 +86,7 @@ LARAVEL_ROUTE_LENS_PREFIX=routescope
 Add to your `.env.production`:
 
 ```env
-LARAVEL_ROUTE_LENS_ENABLED=false
+ROUTESCOPE_ENABLED=false
 ```
 
 Or conditionally in config:

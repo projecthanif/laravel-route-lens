@@ -13,12 +13,12 @@ final class RouteScopeController extends Controller
     {
         $routes = RouteScope::getAllRoutes();
 
-        $apiRoutes = $routes["apiRoutes"]->toArray();
-        $webRoutes = $routes["webRoutes"]->toArray();
+        $apiRoutes = $routes['apiRoutes']->toArray();
+        $webRoutes = $routes['webRoutes']->toArray();
 
-        return view("routescope::routescope", [
-            "apiRoutes" => $apiRoutes,
-            "webRoutes" => $webRoutes,
+        return view('routescope::routescope', [
+            'apiRoutes' => $apiRoutes,
+            'webRoutes' => $webRoutes,
         ]);
     }
 }

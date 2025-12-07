@@ -9,14 +9,14 @@ use Illuminate\Support\ServiceProvider;
 
 final class RouteScopeProvider extends ServiceProvider
 {
-    public const CONFIG_PATH = __DIR__ . "/../../config/routescope.php";
+    public const CONFIG_PATH = __DIR__.'/../../config/routescope.php';
 
     /**
      * Register services into the container.
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(self::CONFIG_PATH, "routescope");
+        $this->mergeConfigFrom(self::CONFIG_PATH, 'routescope');
     }
 
     /**
@@ -35,9 +35,9 @@ final class RouteScopeProvider extends ServiceProvider
     {
         $this->publishes(
             [
-                self::CONFIG_PATH => config_path("routescope.php"),
+                self::CONFIG_PATH => config_path('routescope.php'),
             ],
-            "routescope-config",
+            'routescope-config',
         );
     }
 
@@ -46,25 +46,25 @@ final class RouteScopeProvider extends ServiceProvider
      */
     private function registerRoutes(): void
     {
-        if (!$this->isEnabled()) {
+        if (! $this->isEnabled()) {
             return;
         }
 
         Route::group(
             [
-                "prefix" => config("routescope.prefix", "routescope"),
-                "namespace" => "Projecthanif\\RouteScope\\Controllers",
+                'prefix' => config('routescope.prefix', 'routescope'),
+                'namespace' => 'Projecthanif\\RouteScope\\Controllers',
             ],
-            fn() => $this->loadRoutesFrom(__DIR__ . "/../routes/web.php"),
+            fn () => $this->loadRoutesFrom(__DIR__.'/../routes/web.php'),
         );
 
-        $this->loadViewsFrom(__DIR__ . "/../../resources/views", "routescope");
+        $this->loadViewsFrom(__DIR__.'/../../resources/views', 'routescope');
 
         $this->publishes(
             [
-                __DIR__ . "/../../resources/views" => resource_path("views/vendor/routescope"),
+                __DIR__.'/../../resources/views' => resource_path('views/vendor/routescope'),
             ],
-            "views",
+            'views',
         );
     }
 
@@ -73,6 +73,6 @@ final class RouteScopeProvider extends ServiceProvider
      */
     private function isEnabled(): bool
     {
-        return (bool) config("routescope.enabled", app()->environment("local", "development"));
+        return (bool) config('routescope.enabled', app()->environment('local', 'development'));
     }
 }
