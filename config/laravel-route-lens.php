@@ -11,16 +11,15 @@ return [
     |
     */
 
-    'enabled' => env('LARAVEL_ROUTE_LENS_ENABLED', true),
+    "enabled" => env("LARAVEL_ROUTE_LENS_ENABLED", true),
 
-    'prefix' => env('LARAVEL_ROUTE_LENS_PREFIX', 'route-lens'),
+    "prefix" => env("LARAVEL_ROUTE_LENS_PREFIX", "route-lens"),
 
-    'excluded_patterns' => [
-        'route-lens',
-        '_ignition',
-        'sanctum/csrf-cookie',
-        'telescope',
-        '__execute-laravel-error-solution',
-        b,
+    "excluded_patterns" => [
+        "route-lens",
+        "_ignition",
+        "sanctum/csrf-cookie",
+        "telescope",
+        "__execute-laravel-error-solution",
     ],
 ];
