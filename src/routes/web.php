@@ -3,6 +3,6 @@
 declare(strict_types=1);
 
 use Illuminate\Support\Facades\Route;
-use Projecthanif\LaravelRouteLens\Controllers\RouteLensController;
+use Projecthanif\RouteScope\Controllers\RouteScopeController;
 
-Route::get('/', [RouteLensController::class, 'index'])->name('index');
+Route::get("/", [RouteScopeController::class, "index"])->name("index");

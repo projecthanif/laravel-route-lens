@@ -2,32 +2,32 @@
 
 declare(strict_types=1);
 
-namespace Projecthanif\LaravelRouteLens\Services;
+namespace Projecthanif\RouteScope\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Route;
 
-final class LaravelRouteLensService
+final class RouteScopeService
 {
     private readonly Collection $excludedPatterns;
 
     public function __construct()
     {
-        $this->excludedPatterns = collect(config('laravel-route-lens.excluded_patterns', []));
+        $this->excludedPatterns = collect(config("routescope.excluded_patterns", []));
     }
 
     /**
      * Get all routes organized by category.
      *
-     * @return array<string, mixed>
+     * @return array<string, Collection>
      */
     public function getAllRoutes(): array
     {
         $routes = $this->getFormattedRoutes();
 
         return [
-            'apiRoutes' => $this->filterApiRoutes($routes),
-            'webRoutes' => $this->filterWebRoutes($routes),
+            "apiRoutes" => $this->filterApiRoutes($routes),
+            "webRoutes" => $this->filterWebRoutes($routes),
         ];
     }
 
@@ -40,7 +40,7 @@ final class LaravelRouteLensService
     private function filterApiRoutes(array $routes): Collection
     {
         return collect($routes)
-            ->filter(fn (array $route): bool => str_starts_with((string) $route['path'], '/api/'))
+            ->filter(fn(array $route): bool => str_starts_with((string) $route["path"], "/api/"))
             ->values();
     }
 
@@ -53,7 +53,7 @@ final class LaravelRouteLensService
     private function filterWebRoutes(array $routes): Collection
     {
         return collect($routes)
-            ->filter(fn (array $route): bool => ! str_starts_with((string) $route['path'], '/api/'))
+            ->filter(fn(array $route): bool => !str_starts_with((string) $route["path"], "/api/"))
             ->values();
     }
 
@@ -76,7 +76,10 @@ final class LaravelRouteLensService
 
             $methods = $route->methods();
             // Filter out HEAD and OPTIONS methods for cleaner display
-            $methods = array_filter($methods, fn ($method): bool => ! in_array($method, ['HEAD', 'OPTIONS']));
+            $methods = array_filter(
+                $methods,
+                fn($method): bool => !in_array($method, ["HEAD", "OPTIONS"]),
+            );
 
             if ($methods === []) {
                 continue;
@@ -84,17 +87,17 @@ final class LaravelRouteLensService
 
             foreach ($methods as $method) {
                 $routes[] = [
-                    'method' => $method,
-                    'path' => '/'.$uri,
-                    'source' => $this->getRouteSource($route),
-                    'name' => $route->getName(),
-                    'middleware' => $route->middleware(),
+                    "method" => $method,
+                    "path" => "/" . $uri,
+                    "source" => $this->getRouteSource($route),
+                    "name" => $route->getName(),
+                    "middleware" => $route->middleware(),
                 ];
             }
         }
 
         // Sort routes by path
-        usort($routes, fn (array $a, array $b): int => strcmp($a['path'], $b['path']));
+        usort($routes, fn(array $a, array $b): int => strcmp($a["path"], $b["path"]));
 
         return $routes;
     }
@@ -102,10 +105,10 @@ final class LaravelRouteLensService
     /**
      * Determine if a route should be skipped.
      */
-    private function shouldSkipRoute($uri): bool
+    private function shouldSkipRoute(string $uri): bool
     {
         return $this->excludedPatterns->some(
-            fn (string $pattern): bool => str_contains((string) $uri, $pattern),
+            fn(string $pattern): bool => str_contains((string) $uri, $pattern),
         );
     }
 
@@ -116,13 +119,13 @@ final class LaravelRouteLensService
     {
         $action = $route->getAction();
 
-        if (isset($action['controller'])) {
+        if (isset($action["controller"])) {
             // Format: Controller@method or Controller::class
-            $controller = $action['controller'];
+            $controller = $action["controller"];
 
             if (is_string($controller)) {
                 // Handle both "Controller@method" and "Controller::method" formats
-                $parts = preg_split('/[@]|::/', $controller);
+                $parts = preg_split("/[@]|::/", $controller);
 
                 if (count($parts) === 2) {
                     // Get the short class name
@@ -141,12 +144,12 @@ final class LaravelRouteLensService
         }
 
         // Check if it's a closure
-        if (isset($action['uses']) && $action['uses'] instanceof \Closure) {
-            return 'Closure';
+        if (isset($action["uses"]) && $action["uses"] instanceof \Closure) {
+            return "Closure";
         }
 
         // Fallback
-        return 'routes/web.php';
+        return "routes/web.php";
     }
 
     /**
@@ -155,26 +158,26 @@ final class LaravelRouteLensService
     private function getShortenedNamespace(string $fullClass): string
     {
         // Remove App\ prefix
-        $path = str_replace('App\\', '', $fullClass);
+        $path = str_replace("App\\", "", $fullClass);
 
         // Split by backslashes
-        $parts = explode('\\', $path);
+        $parts = explode("\\", $path);
 
         // Remove the class name (last part)
         array_pop($parts);
 
         if ($parts === []) {
-            return 'app';
+            return "app";
         }
 
         // Convert to path format and shorten
-        $path = strtolower(implode('/', $parts));
+        $path = strtolower(implode("/", $parts));
 
         // Shorten long paths with ellipsis
         if (strlen($path) > 30) {
-            $pathParts = explode('/', $path);
+            $pathParts = explode("/", $path);
             if (count($pathParts) > 3) {
-                return $pathParts[0].'/.../'.end($pathParts);
+                return $pathParts[0] . "/.../" . end($pathParts);
             }
         }
 

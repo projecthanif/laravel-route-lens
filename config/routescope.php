@@ -11,12 +11,12 @@ return [
     |
     */
 
-    "enabled" => env("LARAVEL_ROUTE_LENS_ENABLED", true),
+    "enabled" => env("ROUTESCOPE_ENABLED", app()->environment("local", "development")),
 
-    "prefix" => env("LARAVEL_ROUTE_LENS_PREFIX", "route-lens"),
+    "prefix" => env("ROUTESCOPE_PREFIX", "routescope"),
 
     "excluded_patterns" => [
-        "route-lens",
+        "routescope",
         "_ignition",
         "sanctum/csrf-cookie",
         "telescope",
