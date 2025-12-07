@@ -96,12 +96,6 @@
                 <input id="search-input" type="text" placeholder="Search endpoints..."
                     class="w-full bg-[#050505] border border-border rounded-lg py-2 pl-10 pr-4 text-sm text-gray-300 placeholder-gray-600 focus:outline-none focus:border-gray-600 transition-colors">
             </div>
-
-            <button
-                class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-gray-300 border border-border rounded-lg bg-[#050505] hover:bg-[#111] transition-colors">
-                <i data-lucide="eye" class="w-4 h-4"></i>
-                View
-            </button>
         </div>
 
         <div class="overflow-x-auto">
@@ -255,7 +249,7 @@
             pageTab.classList.remove('text-gray-500');
             apiTab.classList.remove('bg-[#1A1A1A]', 'text-white', 'border', 'border-gray-700', 'shadow-sm');
             apiTab.classList.add('text-gray-500');
-            routeTitle.textContent = 'Page Routes';
+            routeTitle.textContent = 'Web Routes';
             searchInput.value = '';
             renderRoutes(currentRoutes);
             routeCount.textContent = currentRoutes.length;
